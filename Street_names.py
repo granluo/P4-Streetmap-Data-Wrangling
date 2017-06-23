@@ -19,8 +19,7 @@ street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 
 
 expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road",
-            "Trail", "Parkway", "Commons"]
-
+            "Trail", "Parkway", "Commons","Way","Terrace","Row","Plaza", "Circle", "Loop", "Hill", "Expressway", "Court"]
 # UPDATE THIS VARIABLE
 
 
@@ -28,7 +27,11 @@ mapping = { "St": "Street",
             "St.": "Street",
             "Ave": "Avenue",
             "Rd": "Road",
-            "Rd.": "Road"
+            "Rd.": "Road",
+            "Ln": "Lane",
+            "court": "Court",
+            "Blvd": "Boulevard",
+            "Dr": "Drive"
             }
 def get_mapping():
     return mapping
@@ -49,23 +52,20 @@ def audit(osmfile):
     osm_file = open(osmfile, "r")
     street_types = defaultdict(set)
     for event, elem in ET.iterparse(osm_file, events=("start",)):
-
         if elem.tag == "node" or elem.tag == "way":
             for tag in elem.iter("tag"):
                 if is_street_name(tag):
+
                     audit_street_type(street_types, tag.attrib['v'])
     osm_file.close()
     return street_types
 
 
 def update_name(name, mapping):
-
-    # YOUR CODE HERE
     name_array = name.split(' ')
     last = name_array[-1]
     name_array[-1] = mapping[last]
     return ' '.join(name_array)
-    return name
 
 #
 # def test():
