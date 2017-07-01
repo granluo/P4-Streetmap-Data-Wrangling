@@ -25,7 +25,7 @@ city_expected = ["Santa Clara","San Jose","Sunnyvale","Saratoga",'Mountain View'
 
 
 city_mapping = { "SUnnyvale": "Sunnyvale",
-            "San Jos\xe9": "San Jose",
+            r"San Jos\xe9": "San Jose",
             "Ave": "San Jose",
             "san jose": "San Jose",
             }
@@ -110,19 +110,24 @@ def audit(osmfile):
     return (postcode_types,phonenum_types,city_types,street_types)#{"street":street_types,"city":city_types}
 
 
-def update_name(name):
+def update_street_name(name):
     name_array = name.split(' ')
     last = name_array[-1]
-    name_array[-1] = street_mapping[last]
+    if last in street_mapping:
+        name_array[-1] = street_mapping[last]
     return ' '.join(name_array)
 
+
 def update_city_name(name):
-    return city_mapping[name]
+    if name in city_mapping:
+        return city_mapping[name]
+    return name
 
 def update_phone_num(num):
     m = phone_type_re.match(num)
     keypad = {'2':'ABCabc','3':'DEFdef','4':'GHIghi','5':'JKLjkl','6':'MNOmno','7':'PQRSpqrs','8':'TUVtuv','9':'WXYZwxyz'}
     if m is None:
+
         if re.search(r'[a-zA-Z]',num) is not None:
             for key in keypad:
                 num = re.sub(r'['+keypad[key]+']',key,num)
@@ -144,6 +149,7 @@ def update_phone_num(num):
         if re.match(r'\+1\d{10}',num) is not None:
             num = num[:2] + ' ' + num[2:5] + ' ' + num[5:8] + ' ' +num[8:]
 
+
     return num
 
 def update_postcode(num):
@@ -158,12 +164,12 @@ def test():
     for types in st_types:
         pprint.pprint(dict(types))
         print '\n'
-#
-    for st_type, ways in st_types[0].iteritems():
-        print st_type
-        for name in ways:
-            better_name = update_postcode(name)
-            print name, "=>", better_name
+    #
+    # for st_type, ways in st_types[0].iteritems():
+    #     print st_type
+    #     for name in ways:
+    #         better_name = update_postcode(name)
+    #         print name, "=>", better_name
 #             assert phone_type_re.match(better_name)
 #             if name == "West Lexington St.":
 #                 assert better_name == "West Lexington Street"

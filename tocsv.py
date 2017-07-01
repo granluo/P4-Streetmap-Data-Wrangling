@@ -134,18 +134,20 @@ The final return value for a "way" element should look something like:
                'type': 'chicago',
                'value': '366409'}]}
 """
-
 import csv
 import codecs
+import pprint
 import re
 import xml.etree.cElementTree as ET
 
 import cerberus
 
 import schema
+import sys
 
-from Street_names import update_name, audit, is_street_name
+from Street_names import update_street_name, update_city_name, update_phone_num, update_postcode, audit, is_street_name, is_city_name, is_phone_number, is_postcode_number
 
+sys.dont_write_bytecode = True
 OSM_PATH = "C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california_sample.osm"
 
 NODES_PATH = "nodes.csv"
@@ -167,36 +169,36 @@ NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
-
-def update_phone_num(phone_num):
-    """
-    Clean phone number for insertion into SQL database
-    """
-    # Check for valid phone number format
-    m = PHONENUM.match(phone_num)
-    if m is None:
-        # Convert all dashes to spaces
-        if "-" in phone_num:
-            phone_num = re.sub("-", " ", phone_num)
-        # Remove all brackets
-        if "(" in phone_num or ")" in phone_num:
-            phone_num = re.sub("[()]", "", phone_num)
-        # Space out 10 straight numbers
-        if re.match(r'\d{10}', phone_num) is not None:
-            phone_num = phone_num[:3] + " " + phone_num[3:6] + " " + phone_num[6:]
-        # Space out 11 straight numbers
-        elif re.match(r'\d{11}', phone_num) is not None:
-            phone_num = phone_num[:1] + " " + phone_num[1:4] + " " + phone_num[4:7] + " " + phone_num[7:]
-        # Add full country code
-        if re.match(r'\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-            phone_num = "+1 " + phone_num
-        # Add + in country code
-        elif re.match(r'1\s\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-            phone_num = "+" + phone_num
-        # Ignore tag if no area code and local number (<10 digits)
-        elif sum(c.isdigit() for c in phone_num) < 10:
-            return None
-    return phone_num
+#
+# def update_phone_num(phone_num):
+#     """
+#     Clean phone number for insertion into SQL database
+#     """
+#     # Check for valid phone number format
+#     m = PHONENUM.match(phone_num)
+#     if m is None:
+#         # Convert all dashes to spaces
+#         if "-" in phone_num:
+#             phone_num = re.sub("-", " ", phone_num)
+#         # Remove all brackets
+#         if "(" in phone_num or ")" in phone_num:
+#             phone_num = re.sub("[()]", "", phone_num)
+#         # Space out 10 straight numbers
+#         if re.match(r'\d{10}', phone_num) is not None:
+#             phone_num = phone_num[:3] + " " + phone_num[3:6] + " " + phone_num[6:]
+#         # Space out 11 straight numbers
+#         elif re.match(r'\d{11}', phone_num) is not None:
+#             phone_num = phone_num[:1] + " " + phone_num[1:4] + " " + phone_num[4:7] + " " + phone_num[7:]
+#         # Add full country code
+#         if re.match(r'\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
+#             phone_num = "+1 " + phone_num
+#         # Add + in country code
+#         elif re.match(r'1\s\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
+#             phone_num = "+" + phone_num
+#         # Ignore tag if no area code and local number (<10 digits)
+#         elif sum(c.isdigit() for c in phone_num) < 10:
+#             return None
+#     return phone_num
 
 
 def load_new_tag(element, secondary, default_tag_type):
@@ -214,11 +216,25 @@ def load_new_tag(element, secondary, default_tag_type):
         new['type'] = secondary.attrib['k'][:post_colon - 1]
 
     # Cleaning and loading values of various keys
-    # if is_street_name(secondary):
-    #     # Why don't i need to use mapping, street_mapping,
-    #     # and num_line_mapping dicts  as params?
-    #     street_name = update_name(secondary.attrib['v'])
-    #     new['value'] = street_name
+    if is_street_name(secondary):
+        # Why don't i need to use mapping, street_mapping,
+        # and num_line_mapping dicts  as params?
+        street_name = update_street_name(secondary.attrib['v'])
+        new['value'] = street_name
+
+    elif is_city_name(secondary):
+        city_name = update_city_name(secondary.attrib['v'])
+        new['value'] = city_name
+
+    elif is_phone_number(secondary):
+        phonenum = update_phone_num(secondary.attrib['v'])
+        new['value'] = phonenum
+
+    elif is_postcode_number(secondary):
+        postcode = update_postcode(secondary.attrib['v'])
+        new['value'] = postcode
+    else:
+        new['value'] = secondary.attrib['v']
     #
     # elif new['key'] == 'phone':
     #     phone_num = update_phone_num(secondary.attrib['v'])
@@ -253,7 +269,7 @@ def load_new_tag(element, secondary, default_tag_type):
     #
     # else:
     #     new['value'] = secondary.attrib['v']
-    new['value'] = secondary.attrib['v']
+
     return new
 
 
@@ -326,13 +342,24 @@ def validate_element(element, validator, schema=SCHEMA):
     if validator.validate(element, schema) is not True:
         field, errors = next(validator.errors.iteritems())
         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
-        error_strings = (
-            "{0}: {1}".format(k, v if isinstance(v, str) else ", ".join(v))
-            for k, v in errors.iteritems()
-        )
-        raise cerberus.ValidationError(
-            message_string.format(field, "\n".join(error_strings))
-        )
+        error_string = pprint.pformat(errors)
+
+        raise Exception(message_string.format(field, error_string))
+
+
+
+# def validate_element(element, validator, schema=SCHEMA):
+#     """Raise ValidationError if element does not match schema"""
+#     if validator.validate(element, schema) is not True:
+#         field, errors = next(validator.errors.iteritems())
+#         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
+#         error_strings = (
+#             "{0}: {1}".format(k, v if isinstance(v, str) else ", ".join(v))
+#             for k, v in errors.iteritems()
+#         )
+#         raise cerberus.ValidationError(
+#             message_string.format(field, "\n".join(error_strings))
+#         )
 
 
 class UnicodeDictWriter(csv.DictWriter, object):
@@ -381,13 +408,9 @@ def process_map(file_in, validate):
                     validate_element(el, validator)
 
                 if element.tag == 'node':
-                    try:
-                        nodes_writer.writerow(el['node'])
-                        node_tags_writer.writerows(el['node_tags'])
-                    except :
-                        print element.attrib
+                    nodes_writer.writerow(el['node'])
+                    node_tags_writer.writerows(el['node_tags'])
                 elif element.tag == 'way':
-                    print "here is way"
                     ways_writer.writerow(el['way'])
                     way_nodes_writer.writerows(el['way_nodes'])
                     way_tags_writer.writerows(el['way_tags'])

@@ -25,7 +25,7 @@ with open('nodes_tags.csv','rb') as fin:
 cur.executemany("INSERT INTO nodes_tags(id, key, value,type) VALUES (?, ?, ?, ?);", to_db)
 # commit the changes
 conn.commit()
-cur.execute('SELECT * FROM nodes_tags')
+cur.execute('SELECT * FROM nodes_tags where key == "phone"')
 all_rows = cur.fetchall()
 print('1):')
 pprint(all_rows)
