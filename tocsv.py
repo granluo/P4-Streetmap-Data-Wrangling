@@ -145,10 +145,10 @@ import cerberus
 import schema
 import sys
 
-from Street_names import update_street_name, update_city_name, update_phone_num, update_postcode, audit, is_street_name, is_city_name, is_phone_number, is_postcode_number
+from audit import update_street_name, update_city_name, update_phone_num, update_postcode, audit, is_street_name, is_city_name, is_phone_number, is_postcode_number
 
 sys.dont_write_bytecode = True
-OSM_PATH = "C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california_sample.osm"
+OSM_PATH = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -283,7 +283,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
     tags = []  # Handle secondary tags the same way for both node and way elements
 
     if element.tag == 'node':
-        for attrib, value in element.attrib.iteritems():
+        for attrib, value in element.attrib.items():# items() for python2
             if attrib in node_attr_fields:
                 node_attribs[attrib] = value
 
@@ -299,7 +299,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
         return {'node': node_attribs, 'node_tags': tags}
 
     elif element.tag == 'way':
-        for attrib, value in element.attrib.iteritems():
+        for attrib, value in element.attrib.items():
             if attrib in way_attr_fields:
                 way_attribs[attrib] = value
 
@@ -340,7 +340,7 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
 def validate_element(element, validator, schema=SCHEMA):
     """Raise ValidationError if element does not match schema"""
     if validator.validate(element, schema) is not True:
-        field, errors = next(validator.errors.iteritems())
+        field, errors = next(validator.errors.items())
         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
         error_string = pprint.pformat(errors)
 
@@ -351,11 +351,11 @@ def validate_element(element, validator, schema=SCHEMA):
 # def validate_element(element, validator, schema=SCHEMA):
 #     """Raise ValidationError if element does not match schema"""
 #     if validator.validate(element, schema) is not True:
-#         field, errors = next(validator.errors.iteritems())
+#         field, errors = next(validator.errors.items())
 #         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
 #         error_strings = (
 #             "{0}: {1}".format(k, v if isinstance(v, str) else ", ".join(v))
-#             for k, v in errors.iteritems()
+#             for k, v in errors.items()
 #         )
 #         raise cerberus.ValidationError(
 #             message_string.format(field, "\n".join(error_strings))
@@ -367,7 +367,7 @@ class UnicodeDictWriter(csv.DictWriter, object):
 
     def writerow(self, row):
         super(UnicodeDictWriter, self).writerow({
-            k: (v.encode('utf-8') if isinstance(v, unicode) else v) for k, v in row.iteritems()
+            k: (v.encode('utf-8') if isinstance(v, unicode) else v) for k, v in row.items() # in python2 str should be replaced by unicode
         })
 
     def writerows(self, rows):
@@ -419,4 +419,4 @@ def process_map(file_in, validate):
 if __name__ == '__main__':
     # Note: Validation is ~ 10X slower. For the project consider using a small
     # sample of the map when validating.
-    process_map(OSM_PATH, validate=True)
+    process_map(OSM_PATH, validate=False)
