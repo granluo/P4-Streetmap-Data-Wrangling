@@ -110,6 +110,41 @@ ways.csv ........................ 13.0 MB
 ways_tags.csv ................... 20.3 MB
 ways_nodes.cv ................... 45.7 MB  
 ```
+##### Number of unique users
+```
+Count_of_users
+1334            
+```
+##### Number of nodes
+```
+Number_of_Nodes
+1657147
+ ```       
+##### Number of ways
+```
+Number_of_Ways
+226154          
+```
+##### Top 10 users of contribution
+```
+User           Number_of_Contributions
+andygol         295728          
+nmixter         285524          
+mk408           148037          
+Bike Mapper     90980           
+samely          81414           
+RichRico        75663           
+dannykath       73014           
+karitotp        62436           
+MustangBuyer    51667           
+Minh Nguyen     43793           
+```
+##### Number of one-time contributors
+```
+first_time_contribution_user
+289             
+```
+
 
 To improve,
 
