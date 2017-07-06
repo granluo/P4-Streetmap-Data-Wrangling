@@ -32,7 +32,7 @@ After [downloading the dataset](https://s3.amazonaws.com/metro-extracts.mapzen.c
 
 Before updating all the data and fixing problems above, I ran _audit.py_ to read over the entire dataset and find out all different types of expressions and formats. And so I can create different mappings and methods of compilations to cover all different formats.
 
-### Street Names
+##### Street Names
 To correct street names, I iterated each word in an address and correct it to its corresponding mapping in _audit.py_ using the following function:
 ```s
 def update_street_name(name):
@@ -52,11 +52,11 @@ def update_street_name(name):
 
 This updated all street names, such as Great America Pkwy ste 201 to Great America Parkway Suite 201
 
-### City names
+##### City names
 
 Since San Jose has a certain number of counties, after setting each county name in a common format, like case sensitivity, I only have couple city names out of expectations through the whole dataset and so I will have these names corrected by mapping.
 
-### Phone number
+##### Phone number
 I set up a format that all phone numbers should follow, which is like "+1 408 200 4868". Since some of the phone numbers had letters representing numbers, I replaced letters back to numbers. After making sure all numbers are digits, I cleaned phone numbers by removing all symbols, including spaces, not digits, and I would have numbers with consecutive 10 digits or 11 digits, which I edited then to the format for phone numbers.
 ```s
 def update_phone_num(num):
@@ -89,15 +89,27 @@ def update_phone_num(num):
 
 ```
 
-### Postal code
+##### Postal code
 
 For the part of postal code, I only kept the postal codes with 5 digits, instead of the one with 9 digits. Since not all postal codes have 9 digits, in order to keep a common format, I removed the last 4 digits if they have 9.
 
-### For data cannot be updated
+##### For data cannot be updated
 
 After updating all the data, I audited it again and found some data cannot be updated. I found "+1","2924779" in phone number and 'CUPERTINO' in postal code. Data like this might not be able to be updated unless it has more information. However, I will still keep it and move it to the database since at least, we can still dig some information from them, which, though, are not perfect.
 
+### Overview of the data
+This section contains basic statistics about the dataset, the SQL queries used to gather them, and some additional ideas about the data in context.
 
+##### File sizes
+```
+san-jose_california.osm ......... 343 MB
+mydb.db ......................... 204 MB
+nodes.csv ....................... 133 MB
+nodes_tags.csv .................. 2.82 MB
+ways.csv ........................ 13.0 MB
+ways_tags.csv ................... 20.3 MB
+ways_nodes.cv ................... 45.7 MB  
+```
 
 To improve,
 
@@ -196,7 +208,7 @@ $ gulp watch
 ```sh
 $ karma test
 ```
-#### Building for source
+##### Building for source
 For production release:
 ```sh
 $ gulp build --prod
@@ -228,7 +240,7 @@ Verify the deployment by navigating to your server address in your preferred bro
 127.0.0.1:8000
 ```
 
-#### Kubernetes + Google Cloud
+##### Kubernetes + Google Cloud
 
 See [KUBERNETES.md](https://github.com/joemccann/dillinger/blob/master/KUBERNETES.md)
 
