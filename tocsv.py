@@ -188,8 +188,6 @@ def load_new_tag(element, secondary, default_tag_type):
 
     # Cleaning and loading values of various keys
     if is_street_name(secondary):
-        # Why don't i need to use mapping, street_mapping,
-        # and num_line_mapping dicts  as params?
         street_name = update_street_name(secondary.attrib['v'])
         new['value'] = street_name
 
@@ -283,20 +281,6 @@ def validate_element(element, validator, schema=SCHEMA):
 
         raise Exception(message_string.format(field, error_string))
 
-
-
-# def validate_element(element, validator, schema=SCHEMA):
-#     """Raise ValidationError if element does not match schema"""
-#     if validator.validate(element, schema) is not True:
-#         field, errors = next(validator.errors.items())
-#         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
-#         error_strings = (
-#             "{0}: {1}".format(k, v if isinstance(v, str) else ", ".join(v))
-#             for k, v in errors.items()
-#         )
-#         raise cerberus.ValidationError(
-#             message_string.format(field, "\n".join(error_strings))
-#         )
 
 
 class UnicodeDictWriter(csv.DictWriter, object):
