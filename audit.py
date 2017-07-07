@@ -72,32 +72,32 @@ street_mapping = { "St": "Street",
 def get_mapping():
     return mapping
 
-def audit_street_type(street_types, street_name,type_data):
+def audit_type(types, name,type_data):
     m = None
     if type_data == "street":
-        m = street_type_re.search(street_name)
+        m = street_type_re.search(name)
         expected = street_expected
     elif type_data == "city":
-        m = city_type_re.search(street_name)
+        m = city_type_re.search(name)
         expected = city_expected
 
     if m:
         street_type = m.group()
         if street_type not in expected:
-            street_types[street_type].add(street_name)
+            types[street_type].add(name)
 
     if type_data == "phone":
-        m = phone_type_re.match(street_name)
+        m = phone_type_re.match(name)
         if m:
-            street_types['regular'].add(street_name)
+            types['regular'].add(name)
         else:
-            street_types['others'].add(street_name)
+            types['others'].add(name)
     if type_data == "postcode":
-        m = postcode_type_re.match(street_name)
+        m = postcode_type_re.match(name)
         if m:
-            street_types['5digits'].add(street_name)
+            types['5digits'].add(name)
         else:
-            street_types['others'].add(street_name)
+            types['others'].add(name)
 
 def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
@@ -125,24 +125,24 @@ def audit(osmfile):
                 for tag in elem.iter("tag"):
                     if is_street_name(tag):
                         # update_street_name( tag.attrib['v'])
-                        audit_street_type(street_types,update_street_name( tag.attrib['v']), "street")
+                        audit_type(street_types,update_street_name( tag.attrib['v']), "street")
                     elif is_city_name(tag):
-                        audit_street_type(city_types, update_city_name(tag.attrib['v']), "city")
+                        audit_type(city_types, update_city_name(tag.attrib['v']), "city")
                     elif is_phone_number(tag):
-                        audit_street_type(phonenum_types,update_phone_num(tag.attrib['v']),"phone")
+                        audit_type(phonenum_types,update_phone_num(tag.attrib['v']),"phone")
                     elif is_postcode_number(tag):
-                        audit_street_type(postcode_types,update_postcode(tag.attrib['v']),"postcode")
+                        audit_type(postcode_types,update_postcode(tag.attrib['v']),"postcode")
             else:
                 for tag in elem.iter("tag"):
                     if is_street_name(tag):
                         # update_street_name( tag.attrib['v'])
-                        audit_street_type(street_types, tag.attrib['v'], "street")
+                        audit_type(street_types, tag.attrib['v'], "street")
                     elif is_city_name(tag):
-                        audit_street_type(city_types, tag.attrib['v'], "city")
+                        audit_type(city_types, tag.attrib['v'], "city")
                     elif is_phone_number(tag):
-                        audit_street_type(phonenum_types,tag.attrib['v'],"phone")
+                        audit_type(phonenum_types,tag.attrib['v'],"phone")
                     elif is_postcode_number(tag):
-                        audit_street_type(postcode_types,tag.attrib['v'],"postcode")
+                        audit_type(postcode_types,tag.attrib['v'],"postcode")
 
     osm_file.close()
     return (postcode_types,phonenum_types,city_types,street_types)#{"street":street_types,"city":city_types}
