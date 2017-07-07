@@ -148,7 +148,7 @@ import sys
 from audit import update_street_name, update_city_name, update_phone_num, update_postcode, audit, is_street_name, is_city_name, is_phone_number, is_postcode_number
 
 sys.dont_write_bytecode = True
-OSM_PATH = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
+OSM_PATH = b"sample.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
