@@ -202,6 +202,15 @@ name                                VIP Parking                         1
 service                             parking_aisle                       1                                   
 
 ```
+
+##### Potential improvement
+
+In order to increase the accuracy and integrity of data, we can let users who use OpenStreetMap as a source of navigator complete a small survey to contribute to the database. If a user went to a restaurant using OpenStreetMap, when he approached, his app would pop up yes/no questions like if this place has a parking lot or garage, or if this place has wheelchair ramp. And so we can add more information about parking and ramp after getting enough surveys from users.
+
+A tag of comments should be added or at least be optional in each tag. Since every place could have something not included or cannot be fully described. Comments from contributors may help us know what kinds of tags are desired by contributors and users, and so we can develop and extend information of each tag.
+
+
+
 ### Conclusion
 
 The data from OpenStreetMap is raw, but it contains a lot of information, though with various formats. We can still find distributions of amenities, parking information, contributions from users, etc.
