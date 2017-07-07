@@ -112,20 +112,37 @@ ways_nodes.cv ................... 45.7 MB
 ```
 ##### Number of unique users
 ```
+SELECT COUNT(DISTINCT(e.uid)) AS Count_of_users
+FROM (SELECT uid FROM nodes UNION ALL SELECT uid FROM ways) e;')
+```
+```
 Count_of_users
 1334            
 ```
 ##### Number of nodes
+```
+SELECT COUNT(*) as Number_of_Nodes FROM nodes
+```
 ```
 Number_of_Nodes
 1657147
  ```       
 ##### Number of ways
 ```
+SELECT COUNT(*) as Number_of_Ways FROM ways;
+```
+```
 Number_of_Ways
 226154          
 ```
 ##### Top 10 users of contribution
+```
+SELECT e.user as User, COUNT(*) as Number_of_Contributions
+        FROM (SELECT user FROM Nodes UNION ALL SELECT user FROM Ways) e
+        GROUP BY e.user
+        ORDER BY Number_of_Contributions DESC
+        LIMIT 10;
+```
 ```
 User           Number_of_Contributions
 andygol         295728          
@@ -141,178 +158,193 @@ Minh Nguyen     43793
 ```
 ##### Number of one-time contributors
 ```
+SELECT count(*) as first_time_contribution_user
+FROM 	(select e.user,count(*) as count
+		From (select user from nodes union all select user from ways) e
+		group by e.user
+		having count = 1);
+```
+```
 first_time_contribution_user
 289             
 ```
 
+### Other ideas about the dataset
 
-To improve,
-
-  - Create an additional column for 4 digits of postal codes which have them.
-
-  - Drag and drop images (requires your Dropbox account be linkedEcountered in the Map
-
-You can also:
-  - Import and save files from GitHub, Dropbox, Google Drive and One Drive
-  - Drag and drop markdown and HTML files into Dillinger
-  - Export documents as Markdown, HTML and PDF
-
-Markdown is a lightweight markup language based on the formatting conventions that people naturally use in email.  As [John Gruber] writes on the [Markdown site][df1]
-
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
-
-This text you see here is *actually* written in Markdown! To get a feel for Markdown's syntax, type some text into the left window and watch the results in the right.
-
-### Tech
-
-Dillinger uses a number of open source projects to work properly:
-
-* [AngularJS] - HTML enhanced for web apps!
-* [Ace Editor] - awesome web-based text editor
-* [markdown-it] - Markdown parser done right. Fast and easy to extend.
-* [Twitter Bootstrap] - great UI boilerplate for modern web apps
-* [node.js] - evented I/O for the backend
-* [Express] - fast node.js network app framework [@tjholowaychuk]
-* [Gulp] - the streaming build system
-* [Breakdance](http://breakdance.io) - HTML to Markdown converter
-* [jQuery] - duh
-
-And of course Dillinger itself is open source with a [public repository][dill]
- on GitHub.
-
-### Installation
-
-Dillinger requires [Node.js](https://nodejs.org/) v4+ to run.
-
-Install the dependencies and devDependencies and start the server.
+I found the some types of data had various formats. I think that users could have suggestions while they are input data. For example, we can have various ways to type in a phone number, but one of them could be suggested and so to reduce the number of formats.
+San Jose is a city easy to find a parking spot, but the dataset seems to not have that many parking lot. I found a total of 469 nodes with parking information and that still have a spaces to improve. While users type in information of parking, they could have a checkbox to check if they have parking lot, if so they can detail what kind of parking it has. So we have a key named parking with a value yes or no.
 
 ```sh
-$ cd dillinger
-$ npm install -d
-$ node app
+SELECT nodes_tags.key, nodes_tags.value, count(*) as num
+FROM nodes_tags
+where value like '%parking%'
+GROUP BY nodes_tags.value
+ORDER BY num DESC
+limit 40
+```
 ```
 
-For production environments...
+tocsv.py
+untitled
+audit.py
+test.py
+sqlimplement.py
+Settings
+tosql.py
+Report.md
+  1
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
 
-```sh
-$ npm install --production
-$ npm run predeploy
-$ NODE_ENV=production node app
+
+WHERE nodes_tags.value like  'San Jos%' AND nodes_tags.key = 'city' and nodes_tags.value <> 'San Jose';
+#   GROUP BY nodes_tags.value
+#   ORDER BY num DESC
+#   limit 15
+# ''')
+# outcomeprint(cur)
+cur.execute('''
+    SELECT nodes_tags.key, nodes_tags.value, count(*) as num
+    FROM nodes_tags
+    where value like '%parking%'
+    GROUP BY nodes_tags.value
+    ORDER BY num DESC
+    limit 40
+''')
+outcomeprint(cur,35)
+
+cur.execute('''
+
+''')
+# for items in cur.fetchall():
+#     print ''
+#     for item in items:
+#         print item, ', '
+# all_rows = cur.fetchall()
+# pprint (all_rows)
+# pprint(cur.fetchall())
+
+#
+# cur.execute("SELECT * \
+# FROM (SELECT * FROM nodes_tags \
+#     UNION ALL \
+docs
+csv
+sqlite3
+pprint
+Report.md
+sqlimplement.py
+  1
+189
+190
+191
+  •
+192
+193
+194
+  •
+195
+196
+  •
+197
+  •
+198
+199
+200
+201
+202
+203
+204
+205
+  •
+  •
+206
+183
+184
+185
+186
+187
+188
+
+
+  OpenStreetMap](https://www.openstreetmap.org/export#map
+amenity         parking_entrance 86              
+amenity         parking         83              
+name            Apartment Visitor Parking
+10              
+vending         parking_tickets 4               
+name            Adobe Employee Parking 1               
+name            Construction Parking Only
+1               
+name            ES03 parking    1               
+name            Earl Carmichael Park Parking
+1               
+fixme           Entrance to underground parking. Needs
+to be mapped. 1               
+name            Parking spot 1  1               
+name            San Jose Parking 1               
+name            VIP Bike Parking 1               
+name            VIP Parking     1               
+service         parking_aisle   1   
 ```
-
-### Plugins
-
-Dillinger is currently extended with the following plugins. Instructions on how to use them in your own application are linked below.
-
-| Plugin | README |
-| ------ | ------ |
-| Dropbox | [plugins/dropbox/README.md] [PlDb] |
-| Github | [plugins/github/README.md] [PlGh] |
-| Google Drive | [plugins/googledrive/README.md] [PlGd] |
-| OneDrive | [plugins/onedrive/README.md] [PlOd] |
-| Medium | [plugins/medium/README.md] [PlMe] |
-| Google Analytics | [plugins/googleanalytics/README.md] [PlGa] |
-
-
-### Development
-
-Want to contribute? Great!
-
-Dillinger uses Gulp + Webpack for fast developing.
-Make a change in your file and instantanously see your updates!
-
-Open your favorite Terminal and run these commands.
-
-First Tab:
-```sh
-$ node app
+### Conclusion
+The data from OpenStreetMap is raw, but it contain a lot
+of information, though with various formats. We can
+still find distributions of amenities,
+It is expected to have
+limit 40
 ```
-
-Second Tab:
-```sh
-$ gulp watch
 ```
+key            value          num            
+amenity         bicycle_parking 186             
+amenity         parking_space   90              
+Python - sqlimplement.py:134
+key                                value                              num                                
+amenity                             bicycle_parking                     186                                 
+amenity                             parking_space                       90                                  
+amenity                             parking_entrance                    86                                  
+amenity                             parking                             83                                  
+name                                Apartment Visitor Parking           10                                  
+vending                             parking_tickets                     4                                   
+name                                Adobe Employee Parking              1                                   
+name                                Construction Parking Only           1                                   
+name                                ES03 parking                        1                                   
+name                                Earl Carmichael Park Parking        1                                   
+fixme                               Entrance to underground parking. Needs to be mapped. 1                                   
+name                                Parking spot 1                      1                                   
+name                                San Jose Parking                    1                                   
+name                                VIP Bike Parking                    1                                   
+name                                VIP Parking                         1                                   
+service                             parking_aisle                       1                                   
 
-(optional) Third:
-```sh
-$ karma test
 ```
-##### Building for source
-For production release:
-```sh
-$ gulp build --prod
-```
-Generating pre-built zip archives for distribution:
-```sh
-$ gulp build dist --prod
-```
-### Docker
-Dillinger is very easy to install and deploy in a Docker container.
-
-By default, the Docker will expose port 80, so change this within the Dockerfile if necessary. When ready, simply use the Dockerfile to build the image.
-
-```sh
-cd dillinger
-docker build -t joemccann/dillinger:${package.json.version}
-```
-This will create the dillinger image and pull in the necessary dependencies. Be sure to swap out `${package.json.version}` with the actual version of Dillinger.
-
-Once done, run the Docker image and map the port to whatever you wish on your host. In this example, we simply map port 8000 of the host to port 80 of the Docker (or whatever port was exposed in the Dockerfile):
-
-```sh
-docker run -d -p 8000:8080 --restart="always" <youruser>/dillinger:${package.json.version}
-```
-
-Verify the deployment by navigating to your server address in your preferred browser.
-
-```sh
-127.0.0.1:8000
-```
-
-##### Kubernetes + Google Cloud
-
-See [KUBERNETES.md](https://github.com/joemccann/dillinger/blob/master/KUBERNETES.md)
-
-
-### Todos
-
- - Write MOAR Tests
- - Add Night Mode
-
-License
-----
-
-MIT
-
-
-**Free Software, Hell Yeah!**
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-
-
-   [dill]: <https://github.com/joemccann/dillinger>
-   [git-repo-url]: <https://github.com/joemccann/dillinger.git>
-   [john gruber]: <http://daringfireball.net>
-   [df1]: <http://daringfireball.net/projects/markdown/>
-   [markdown-it]: <https://github.com/markdown-it/markdown-it>
-   [Ace Editor]: <http://ace.ajax.org>
-   [node.js]: <http://nodejs.org>
-   [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
-   [jQuery]: <http://jquery.com>
-   [@tjholowaychuk]: <http://twitter.com/tjholowaychuk>
-   [express]: <http://expressjs.com>
-   [AngularJS]: <http://angularjs.org>
-   [Gulp]: <http://gulpjs.com>
-
-   [PlDb]: <https://github.com/joemccann/dillinger/tree/master/plugins/dropbox/README.md>
-   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
-   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
-   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
-   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
-   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
+### Conclusion
+The data from OpenStreetMap is raw, but it contain a lot of information, though with various formats. We can still find distributions of amenities, parking information, contributions from users, etc.
