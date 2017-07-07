@@ -15,7 +15,7 @@ import re
 import pprint
 
 AFTER_UPDATE = False # show the outcome of audit after all inconsistent data getting updated
-OSMFILE = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
+OSMFILE = b"sample.osm"
 
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 city_type_re = re.compile('.*')
