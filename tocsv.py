@@ -148,7 +148,7 @@ import sys
 from audit import update_street_name, update_city_name, update_phone_num, update_postcode, audit, is_street_name, is_city_name, is_phone_number, is_postcode_number
 
 sys.dont_write_bytecode = True
-OSM_PATH = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
+OSM_PATH = b"sample.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -169,36 +169,7 @@ NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
-#
-# def update_phone_num(phone_num):
-#     """
-#     Clean phone number for insertion into SQL database
-#     """
-#     # Check for valid phone number format
-#     m = PHONENUM.match(phone_num)
-#     if m is None:
-#         # Convert all dashes to spaces
-#         if "-" in phone_num:
-#             phone_num = re.sub("-", " ", phone_num)
-#         # Remove all brackets
-#         if "(" in phone_num or ")" in phone_num:
-#             phone_num = re.sub("[()]", "", phone_num)
-#         # Space out 10 straight numbers
-#         if re.match(r'\d{10}', phone_num) is not None:
-#             phone_num = phone_num[:3] + " " + phone_num[3:6] + " " + phone_num[6:]
-#         # Space out 11 straight numbers
-#         elif re.match(r'\d{11}', phone_num) is not None:
-#             phone_num = phone_num[:1] + " " + phone_num[1:4] + " " + phone_num[4:7] + " " + phone_num[7:]
-#         # Add full country code
-#         if re.match(r'\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-#             phone_num = "+1 " + phone_num
-#         # Add + in country code
-#         elif re.match(r'1\s\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-#             phone_num = "+" + phone_num
-#         # Ignore tag if no area code and local number (<10 digits)
-#         elif sum(c.isdigit() for c in phone_num) < 10:
-#             return None
-#     return phone_num
+
 
 
 def load_new_tag(element, secondary, default_tag_type):
@@ -217,8 +188,6 @@ def load_new_tag(element, secondary, default_tag_type):
 
     # Cleaning and loading values of various keys
     if is_street_name(secondary):
-        # Why don't i need to use mapping, street_mapping,
-        # and num_line_mapping dicts  as params?
         street_name = update_street_name(secondary.attrib['v'])
         new['value'] = street_name
 
@@ -235,40 +204,6 @@ def load_new_tag(element, secondary, default_tag_type):
         new['value'] = postcode
     else:
         new['value'] = secondary.attrib['v']
-    #
-    # elif new['key'] == 'phone':
-    #     phone_num = update_phone_num(secondary.attrib['v'])
-    #     if phone_num is not None:
-    #         new['value'] = phone_num
-    #     else:
-    #         return None
-    #
-    # elif new['key'] == 'province':
-    #     # Change Ontario to ON
-    #     province = secondary.attrib['v']
-    #     if province == 'Ontario':
-    #         province = 'ON'
-    #     new['value'] = province
-    #
-    # elif new['key'] == 'postcode':
-    #     post_code = secondary.attrib['v'].strip()
-    #     m = POSTCODE.match(post_code)
-    #     if m is not None:
-    #         # Add space in middle if there is none
-    #         if " " not in post_code:
-    #             post_code = post_code[:3] + " " + post_code[3:]
-    #         # Convert to upper case
-    #         new['value'] = post_code.upper()
-    #     else:
-    #         # Keep zip code revealed in postal code audit for document deletion purposes
-    #         if post_code[:5] == "14174":
-    #             new['value'] = post_code
-    #         # Ignore tag if improper postal code format
-    #         else:
-    #             return None
-    #
-    # else:
-    #     new['value'] = secondary.attrib['v']
 
     return new
 
@@ -348,20 +283,6 @@ def validate_element(element, validator, schema=SCHEMA):
 
 
 
-# def validate_element(element, validator, schema=SCHEMA):
-#     """Raise ValidationError if element does not match schema"""
-#     if validator.validate(element, schema) is not True:
-#         field, errors = next(validator.errors.items())
-#         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
-#         error_strings = (
-#             "{0}: {1}".format(k, v if isinstance(v, str) else ", ".join(v))
-#             for k, v in errors.items()
-#         )
-#         raise cerberus.ValidationError(
-#             message_string.format(field, "\n".join(error_strings))
-#         )
-
-
 class UnicodeDictWriter(csv.DictWriter, object):
     """Extend csv.DictWriter to handle Unicode input"""
 
@@ -419,4 +340,4 @@ def process_map(file_in, validate):
 if __name__ == '__main__':
     # Note: Validation is ~ 10X slower. For the project consider using a small
     # sample of the map when validating.
-    process_map(OSM_PATH, validate=False)
+    process_map(OSM_PATH, validate=True)

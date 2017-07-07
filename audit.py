@@ -14,6 +14,8 @@ from collections import defaultdict
 import re
 import pprint
 
+AFTER_UPDATE = False # show the outcome of audit after all inconsistent data getting updated
+OSMFILE = b"sample.osm"
 
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 city_type_re = re.compile('.*')
@@ -110,7 +112,6 @@ def is_phone_number(elem):
 def is_postcode_number(elem):
     return ("postcode" in elem.attrib['k'])
 
-AFTER_UPDATE = False # show the outcome of audit after all inconsistent data getting updated
 
 def audit(osmfile):
     osm_file = open(osmfile, "r")#,encoding="utf8")
@@ -175,34 +176,6 @@ def update_street_name(name):
                 break
     return ' '.join(name_array)
 
-# def update_street_name(name):
-#
-#     name = name.title()
-#     if "," in name:
-#         name = name.split(',')[0]
-#     name_array = name.split(' ')
-#     name_update = street_name_search(name_array)
-#     if name_update is not None:
-#         return ' '.join(name_update)
-#     return name
-    # last = name_array[-1]
-    #
-    # if last in street_expected:
-    #     return name
-    # if last in street_mapping:
-    #     name_array[-1] = street_mapping[last]
-    # else:
-    #     for i in  range(len(name_array)):
-    #         if name_array[i] in street_expected:
-    #             return ' '.join(name_array[:i])
-    #         if name_array[i]  in street_mapping:
-    #             name_array[i] = street_mapping[name_array[i]]
-    #             return ' '.join(name_array[:i])
-    #
-    #
-    #
-    # return ' '.join(name_array)
-
 
 def update_city_name(name):
     name = name.split(',')[0]
@@ -249,7 +222,6 @@ def update_postcode(num):
 
 
 
-OSMFILE = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
 def test():
     st_types = audit(OSMFILE)
 #     assert len(st_types) == 3
@@ -257,22 +229,10 @@ def test():
 
         pprint.pprint(dict(types))
         print ('\n')
-    #
-    count = 0
     for st_type, ways in st_types[2].iteritems():
         for name in ways:
-            if name == u"San Jos/xe9":
-                count += 1
             better_name = update_city_name(name)
-            print ( "=>", better_name)
+            print ( name, "=>", better_name)
 
-    print count
-#             assert phone_type_re.match(better_name)
-#             if name == "West Lexington St.":
-#                 assert better_name == "West Lexington Street"
-#             if name == "Baldwin Rd.":
-#                 assert better_name == "Baldwin Road"
-#
-#
 if __name__ == '__main__':
     test()
