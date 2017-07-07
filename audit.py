@@ -15,6 +15,7 @@ import re
 import pprint
 
 AFTER_UPDATE = False # show the outcome of audit after all inconsistent data getting updated
+OSMFILE = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
 
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 city_type_re = re.compile('.*')
@@ -221,7 +222,6 @@ def update_postcode(num):
 
 
 
-OSMFILE = b"C:\Users\Zongran\Dropbox\Udacity nano\p4 streetmap data wrangling dataset\san-jose_california.osm"
 def test():
     st_types = audit(OSMFILE)
 #     assert len(st_types) == 3
