@@ -169,36 +169,7 @@ NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
-#
-# def update_phone_num(phone_num):
-#     """
-#     Clean phone number for insertion into SQL database
-#     """
-#     # Check for valid phone number format
-#     m = PHONENUM.match(phone_num)
-#     if m is None:
-#         # Convert all dashes to spaces
-#         if "-" in phone_num:
-#             phone_num = re.sub("-", " ", phone_num)
-#         # Remove all brackets
-#         if "(" in phone_num or ")" in phone_num:
-#             phone_num = re.sub("[()]", "", phone_num)
-#         # Space out 10 straight numbers
-#         if re.match(r'\d{10}', phone_num) is not None:
-#             phone_num = phone_num[:3] + " " + phone_num[3:6] + " " + phone_num[6:]
-#         # Space out 11 straight numbers
-#         elif re.match(r'\d{11}', phone_num) is not None:
-#             phone_num = phone_num[:1] + " " + phone_num[1:4] + " " + phone_num[4:7] + " " + phone_num[7:]
-#         # Add full country code
-#         if re.match(r'\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-#             phone_num = "+1 " + phone_num
-#         # Add + in country code
-#         elif re.match(r'1\s\d{3}\s\d{3}\s\d{4}', phone_num) is not None:
-#             phone_num = "+" + phone_num
-#         # Ignore tag if no area code and local number (<10 digits)
-#         elif sum(c.isdigit() for c in phone_num) < 10:
-#             return None
-#     return phone_num
+
 
 
 def load_new_tag(element, secondary, default_tag_type):
@@ -235,40 +206,6 @@ def load_new_tag(element, secondary, default_tag_type):
         new['value'] = postcode
     else:
         new['value'] = secondary.attrib['v']
-    #
-    # elif new['key'] == 'phone':
-    #     phone_num = update_phone_num(secondary.attrib['v'])
-    #     if phone_num is not None:
-    #         new['value'] = phone_num
-    #     else:
-    #         return None
-    #
-    # elif new['key'] == 'province':
-    #     # Change Ontario to ON
-    #     province = secondary.attrib['v']
-    #     if province == 'Ontario':
-    #         province = 'ON'
-    #     new['value'] = province
-    #
-    # elif new['key'] == 'postcode':
-    #     post_code = secondary.attrib['v'].strip()
-    #     m = POSTCODE.match(post_code)
-    #     if m is not None:
-    #         # Add space in middle if there is none
-    #         if " " not in post_code:
-    #             post_code = post_code[:3] + " " + post_code[3:]
-    #         # Convert to upper case
-    #         new['value'] = post_code.upper()
-    #     else:
-    #         # Keep zip code revealed in postal code audit for document deletion purposes
-    #         if post_code[:5] == "14174":
-    #             new['value'] = post_code
-    #         # Ignore tag if improper postal code format
-    #         else:
-    #             return None
-    #
-    # else:
-    #     new['value'] = secondary.attrib['v']
 
     return new
 
