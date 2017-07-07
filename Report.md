@@ -204,4 +204,7 @@ service                             parking_aisle                       1
 ```
 ### Conclusion
 
-The data from OpenStreetMap is raw, but it contain a lot of information, though with various formats. We can still find distributions of amenities, parking information, contributions from users, etc.
+The data from OpenStreetMap is raw, but it contains a lot of information, though with various formats. We can still find distributions of amenities, parking information, contributions from users, etc.
+However, we can still see the dataset does not have additional information about amenities, tourist attractions and other popular places.
+As I said before, we can add restrictions or suggestions for users while they are editing the dataset, which can help them reduce the chance to have typo or keep the format of input the same. We may need to add more tags options, like a link to wiki for more historic information about a popular place.
+Generally speaking, the dataset has what a map should have in base, but more information or options could be added in to each node to make it more friendly to users.
