@@ -10,14 +10,14 @@ sqlite_file = "mydb.db"
 conn = sqlite3.connect(sqlite_file)
 cur = conn.cursor()
 
-cur.execute('''UPDATE nodes_tags
-SET value = "San Jose"
-WHERE nodes_tags.value like  'San Jos%' AND nodes_tags.key = 'city' and nodes_tags.value <> 'San Jose';
-''')
-cur.execute('''UPDATE ways_tags
-SET value = "San Jose"
-WHERE ways_tags.value like  'San Jos%' AND ways_tags.key = 'city' and ways_tags.value <> 'San Jose';
-''')
+# cur.execute('''UPDATE nodes_tags
+# SET value = "San Jose"
+# WHERE nodes_tags.value like  'San Jos%' AND nodes_tags.key = 'city' and nodes_tags.value <> 'San Jose';
+# ''')
+# cur.execute('''UPDATE ways_tags
+# SET value = "San Jose"
+# WHERE ways_tags.value like  'San Jos%' AND ways_tags.key = 'city' and ways_tags.value <> 'San Jose';
+# ''')
 # cur.execute('SELECT * FROM nodes_tags LIMIT 10')
 # pprint(cur.fetchall())
 # cur.execute('SELECT * FROM nodes LIMIT 10')
@@ -33,14 +33,14 @@ WHERE ways_tags.value like  'San Jos%' AND ways_tags.key = 'city' and ways_tags.
 # cur.executescript('')
 
 # This function is to print outcome of quesries in a table format.
-def outcomeprint(cursor):
+def outcomeprint(cursor,space = 15):
 	all_rows = cursor.fetchall()
 	title =  [(description[0]) for description in cursor.description]
-	row_format ="{:<15}" * (len(title))
+	row_format =("{:<"+str(space) + "}") * (len(title))
 	print row_format.format(*title)
 	for i in all_rows:
 		for j in i:
-			print "{:<15}".format(j),
+			print ("{:<"+str(space) + "}") .format(j),
 		print ''
 	print ''
 
@@ -124,14 +124,18 @@ cur.execute('''
 ''')
 outcomeprint(cur)
 cur.execute('''
-	SELECT nodes_tags.key, count(*) as num
+	SELECT nodes_tags.key, nodes_tags.value, count(*) as num
 	FROM nodes_tags
-	where value like '%Donaldo%'
-	GROUP BY nodes_tags.key
+	where value like '%parking%'
+	GROUP BY nodes_tags.value
 	ORDER BY num DESC
 	limit 40
 ''')
-outcomeprint(cur)
+outcomeprint(cur,35)
+
+cur.execute('''
+
+''')
 # for items in cur.fetchall():
 #     print ''
 #     for item in items:
