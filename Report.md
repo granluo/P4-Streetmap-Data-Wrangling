@@ -1,4 +1,4 @@
-# OpenStreetMap Data Case Study
+﻿# OpenStreetMap Data Case Study
 
 ### Map Area
 
@@ -205,7 +205,7 @@ service                             parking_aisle                       1
 
 ##### Potential improvement
 
-In order to increase the accuracy and integrity of data, we can let users who use OpenStreetMap as a source of navigator complete a small survey to contribute to the database. If a user went to a restaurant using OpenStreetMap, when he approached, the app would pop up yes/no question,s like whether this place has a parking lot or garage, or whether this place has wheelchair ramp. And so we can add more information about parking and ramp after getting enough surveys from users.
+In order to increase the accuracy and integrity of data, we can let users who use OpenStreetMap as a source of navigator complete a small survey to contribute to the database. If a user went to a restaurant using OpenStreetMap, when he approached, the app would pop up yes/no questions, like whether this place has a parking lot or garage, or whether this place has wheelchair ramp. And so we can add more information about parking and ramp after getting enough surveys from users.
 
 A tag of comments should be added or at least be optional in each node. Since every place could have something not included or cannot be fully described by current tags. Comments from contributors may help us know what kinds of tags are desired by contributors and users, and so we can develop and extend information of each tag.
 
