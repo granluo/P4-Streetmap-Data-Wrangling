@@ -1,5 +1,10 @@
 # P4-Streetmap-data-wrangling
 Here is the project of data wrangling. The data used in this project is from OpenStreetMap.
+This project is to audit map data including streetnames, cities, phones and postal codes in San Jose and keep all these data in the same format.
+
+Then we exported data into csv files and used SQLite to create a database with these files.
+
+We also use SQL queries to demonstrate some outputs.
 
 Here is the link to the data sourse:
 
